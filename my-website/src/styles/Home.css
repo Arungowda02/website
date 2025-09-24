@@ -1,0 +1,61 @@
+/* Continuous marquee: left-to-right like a ticker.
+   We duplicate the items in JSX so the animation never shows empty gap. */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  } /* -50% because we duplicated the content */
+}
+
+/* reverse direction for internships */
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* animation utilities */
+.animate-marquee {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  width: max-content;
+  animation: marquee-reverse 20s linear infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0px rgba(34, 197, 94, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.9);
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+/* optional: slightly reduce motion on small screens */
+@media (max-width: 640px) {
+  .animate-marquee,
+  .animate-marquee-reverse {
+    animation-duration: 28s;
+  }
+}

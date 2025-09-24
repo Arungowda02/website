@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Web Development Internship",
+     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ-vVuajDAV9ZohhSyEHS6k-8dN7seIbqYIw&s", 
+    "topics": ["HTML", "CSS", "JavaScript", "React", "Node.js"],
+    "duration": "2 Months",
+    "mode": "Online",
+    "fees": "₹5000",
+    "description": "Hands-on training in building modern web applications using MERN stack. Includes mentorship, live projects, and certification."
+  },
+  {
+    "id": 2,
+    "title": "Data Science Internship",
+     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyAGfSZt2-Uz4NSwXGoaUDFCb1nVSfvvnclQ&s", 
+    "topics": ["Python", "Pandas", "Machine Learning", "Deep Learning"],
+    "duration": "3 Months",
+    "mode": "Hybrid",
+    "fees": "₹7000",
+    "description": "Learn data analysis, machine learning models, and AI workflows. Work on real datasets with guided mentorship."
+  },
+    {
+    "id": 3,
+    "title": "Data Science Internship",
+     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyAGfSZt2-Uz4NSwXGoaUDFCb1nVSfvvnclQ&s", 
+    "topics": ["Python", "Pandas", "Machine Learning", "Deep Learning"],
+    "duration": "3 Months",
+    "mode": "Hybrid",
+    "fees": "₹7000",
+    "description": "Learn data analysis, machine learning models, and AI workflows. Work on real datasets with guided mentorship."
+  }
+]
