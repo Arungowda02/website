@@ -3,7 +3,6 @@ import "./App.css";
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import Internship from "./pages/Internship";
-import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -17,7 +16,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/internship" element={<Internship />} />
-          <Route path="/admin" element={<Admin />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

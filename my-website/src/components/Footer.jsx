@@ -3,7 +3,7 @@ import { FaLinkedin, FaGithub, FaTwitter, FaInstagram } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t mt-12 text-gray-100">
+    <footer className="bg-black border-t text-gray-100">
       <div className="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
         {/* Left - Brand / Copyright */}
         <div>
@@ -25,9 +25,6 @@ export default function Footer() {
             </Link>
             <Link to="/internship" className="hover:text-blue-400 transition">
               Internships
-            </Link>
-            <Link to="/admin" className="hover:text-blue-400 transition">
-              Admin
             </Link>
           </div>
         </div>

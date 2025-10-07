@@ -1,79 +1,114 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
-import projectsData from "../data/projects.json";
+import React, { useState, useEffect, useRef } from "react";
+import projects from "../data/Projects.json";
 import { motion } from "framer-motion";
 import ImageModal from "../components/ImageModal";
+import FormModal from "../components/FormModal";
 
 export default function Projects() {
-  const [showFullDesc, setShowFullDesc] = useState({});
-  const [galleryProject, setGalleryProject] = useState(null);
-
-  // Modal state
+  const [hovered, setHovered] = useState(null);
   const [modalProject, setModalProject] = useState(null);
   const [modalIndex, setModalIndex] = useState(null);
-
+  const [galleryProject, setGalleryProject] = useState(null);
   const [offsets, setOffsets] = useState({});
+  const [showFullDesc, setShowFullDesc] = useState({});
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const marqueeRefs = useRef({});
 
-  // Auto-slide effect
+  // Auto-slide marquee
   useEffect(() => {
     const intervals = {};
-    projectsData.forEach((project) => {
+    projects.forEach((project) => {
       intervals[project.id] = setInterval(() => {
-        setOffsets((prev) => ({
-          ...prev,
-          [project.id]:
-            ((prev[project.id] || 0) - 1) % (project.images.length * 200),
-        }));
+        if (!marqueeRefs.current[project.id]?.hovered) {
+          setOffsets((prev) => ({
+            ...prev,
+            [project.id]:
+              ((prev[project.id] || 0) - 1) % (project.images.length * 200),
+          }));
+        }
       }, 20);
     });
-    return () => {
-      Object.values(intervals).forEach(clearInterval);
-    };
+    return () => Object.values(intervals).forEach(clearInterval);
   }, []);
 
-  // Open modal
   const openModal = (project, index) => {
     setModalProject(project);
     setModalIndex(index);
+    setGalleryProject(null); // close gallery if open
   };
 
-  // Modal navigation
   const prevImage = () => {
+    if (!modalProject) return;
     setModalIndex(
       (modalIndex - 1 + modalProject.images.length) % modalProject.images.length
     );
   };
+
   const nextImage = () => {
+    if (!modalProject) return;
     setModalIndex((modalIndex + 1) % modalProject.images.length);
   };
 
+  const openForm = (project) => {
+    setSelectedProject(project);
+    setFormOpen(true);
+  };
+
   return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="container mx-auto px-6 space-y-12">
-        {/* Page Heading */}
+    <div className="min-h-screen bg-gradient-to-b from-gray-500 via-white to-gray-500 py-12">
+      <div className="container mx-auto px-4 space-y-12">
         <h1 className="text-3xl md:text-4xl font-extrabold text-center mb-10 relative group">
-          <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-            Our Projects
-          </span>
+          <span className="text-white font-extrabold drop-shadow-md">
+  Our Projects
+</span>
+
           <span className="block w-16 h-1 bg-green-500 mx-auto mt-2 transition-all group-hover:w-28"></span>
         </h1>
 
-        {projectsData.map((project) => (
+        {projects.map((project) => (
           <div
             key={project.id}
-            className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition"
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition overflow-hidden"
           >
-            {/* Left: Auto Sliding Carousel */}
-            <div className="overflow-hidden relative h-56 sm:h-64 bg-gray-200 rounded-lg shadow">
-              <motion.div
+            {/* Project title and price */}
+            <div className="mb-4">
+              <h2 className="text-xl md:text-2xl font-bold mb-1 hover:text-green-600 transition">
+                {project.title}
+              </h2>
+              <p className="text-green-600 font-semibold mb-2">
+                Price: {project.price}
+              </p>
+            </div>
+
+            {/* Marquee container */}
+            <div
+              className="overflow-hidden relative rounded-lg"
+              onMouseEnter={() => {
+                marqueeRefs.current[project.id] = { hovered: true };
+              }}
+              onMouseLeave={() => {
+                marqueeRefs.current[project.id] = { hovered: false };
+              }}
+            >
+              <div
                 className="flex gap-4"
-                animate={{ x: offsets[project.id] || 0 }}
-                transition={{ ease: "linear", duration: 0 }}
+                style={{
+                  transform: `translateX(${offsets[project.id] || 0}px)`,
+                  transition: "transform linear 0s",
+                }}
               >
                 {[...project.images, ...project.images].map((img, idx) => (
-                  <div
+                  <motion.div
                     key={idx}
-                    className="flex-shrink-0 cursor-pointer"
+                    className={`flex-shrink-0 cursor-pointer rounded-lg shadow-md relative ${
+                      hovered === idx ? "z-20" : "z-10"
+                    }`}
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.3 }}
+                    onHoverStart={() => setHovered(idx)}
+                    onHoverEnd={() => setHovered(null)}
                     onClick={() =>
                       openModal(project, idx % project.images.length)
                     }
@@ -81,52 +116,48 @@ export default function Projects() {
                     <img
                       src={img}
                       alt={project.title}
-                      className="h-56 sm:h-64 w-48 sm:w-56 object-cover rounded-lg shadow-md hover:scale-105 transition-transform"
+                      className="h-44 sm:h-52 md:h-56 w-48 sm:w-56 object-cover rounded-lg pointer-events-none"
                     />
-                  </div>
+                  </motion.div>
                 ))}
-              </motion.div>
+              </div>
             </div>
 
-            {/* Right: Details */}
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold mb-3 hover:text-orange-600 transition">
-                {project.title}
-              </h2>
-              <p className="text-lg font-semibold text-green-600 mb-3">
-                Price: {project.price}
-              </p>
+            {/* Description + toggle */}
+            <div className="mt-4">
               <p className="text-gray-700">
                 {showFullDesc[project.id]
                   ? project.description
                   : project.description.slice(0, 120) + "..."}
               </p>
-              <button
-                onClick={() =>
-                  setShowFullDesc((prev) => ({
-                    ...prev,
-                    [project.id]: !prev[project.id],
-                  }))
-                }
-                className="mt-3 text-blue-600"
-              >
-                {showFullDesc[project.id] ? "View Less" : "View More"}
-              </button>
-
-              {/* View All Images */}
-              <div className="mt-4">
+              {project.description.length > 120 && (
                 <button
-                  onClick={() => setGalleryProject(project)}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md transition"
+                  onClick={() =>
+                    setShowFullDesc((prev) => ({
+                      ...prev,
+                      [project.id]: !prev[project.id],
+                    }))
+                  }
+                  className="mt-2 text-blue-600 hover:underline"
                 >
-                  View All Images
+                  {showFullDesc[project.id] ? "View Less" : "View More"}
                 </button>
-              </div>
+              )}
+            </div>
+
+            {/* Buy this Project Button */}
+            <div className="mt-4">
+              <button
+                onClick={() => openForm(project)}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md transition"
+              >
+                Buy this Project
+              </button>
             </div>
           </div>
         ))}
 
-        {/* Reusable Image Modal */}
+        {/* Big Image Modal */}
         <ImageModal
           project={modalProject}
           index={modalIndex}
@@ -138,32 +169,14 @@ export default function Projects() {
           onNext={nextImage}
         />
 
-        {/* Gallery Modal */}
-        {galleryProject && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-            <div className="bg-white p-6 rounded-lg shadow-lg relative max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-              <button
-                onClick={() => setGalleryProject(null)}
-                className="absolute top-2 right-2 text-gray-700 hover:text-red-600 text-xl"
-              >
-                ✕
-              </button>
-              <h2 className="text-2xl font-bold mb-4">
-                {galleryProject.title} - Gallery
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {galleryProject.images.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`${galleryProject.title}-${idx}`}
-                    className="w-full h-40 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition"
-                    onClick={() => openModal(galleryProject, idx)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+        {/* Form Modal */}
+        {formOpen && selectedProject && (
+          <FormModal
+            open={formOpen}
+            onClose={() => setFormOpen(false)}
+            defaultType="project"
+            defaultSelection={selectedProject.title}
+          />
         )}
       </div>
     </div>
